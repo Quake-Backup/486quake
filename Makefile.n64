@@ -1,0 +1,124 @@
+#
+# Quake Makefile for Nintendo 64 with libdragon
+#
+
+BUILDDIR ?= $(shell pwd)/build-n64
+BUILD_DIR=$(BUILDDIR)/486quake
+
+SRC_DIR=$(shell pwd)/src
+SOURCE_DIR=$(SRC_DIR)
+
+include $(N64_INST)/include/n64.mk
+
+include common.mk
+
+ARCH=mips64
+NOARCH=noarch
+
+OLEVEL ?= Os
+OCPU ?= n64
+OARCH ?= vr4300
+OTUNE ?= vr4300
+OLTO ?= no
+OASM ?= no
+OSTRIP ?=-s
+RENDERER ?=std
+
+DEFS := -DPARANOID
+
+BINNAME=Quake
+
+ifeq "$(OLTO)" "yes"
+    LTOFLAGS=-flto
+    BINNAME:=$(BINNAME)_lto
+endif
+
+ID386=0
+
+CC_VERSION=$(shell $(N64_CC) --version | head -n 1 | awk -F " " '{print $3}')
+
+N64_CFLAGS += \
+	-Dstricmp=strcasecmp $(DEFS) \
+	-DSUBARCH="\"$(OCPU)\"" -DOLEVEL="\"$(OLEVEL)\"" -DREVISION="$(REVISION)" -DLTOFLAGS="\" $(LTOFLAGS)\"" \
+	-Did386=$(ID386) -DCCVERSION="\"$(CC_VERSION)\"" \
+	-I src/ -I src/r_$(RENDERER)/ \
+	\
+	-Wno-error
+
+#############################################################################
+# SVGALIB Quake
+#############################################################################
+
+486QUAKE_OBJS = \
+	$(BUILDDIR)/486quake/client/cl_demo.o \
+	$(BUILDDIR)/486quake/client/cl_input.o \
+	$(BUILDDIR)/486quake/client/cl_main.o \
+	$(BUILDDIR)/486quake/client/cl_parse.o \
+	$(BUILDDIR)/486quake/client/cl_tent.o \
+	$(BUILDDIR)/486quake/chase.o \
+	$(BUILDDIR)/486quake/cmd.o \
+	$(BUILDDIR)/486quake/common.o \
+	$(BUILDDIR)/486quake/console.o \
+	$(BUILDDIR)/486quake/crc.o \
+	$(BUILDDIR)/486quake/cvar.o \
+	$(BUILDDIR)/486quake/host.o \
+	$(BUILDDIR)/486quake/host_cmd.o \
+	$(BUILDDIR)/486quake/keys.o \
+	$(BUILDDIR)/486quake/menu.o \
+	$(BUILDDIR)/486quake/mathlib.o \
+	$(BUILDDIR)/486quake/model.o \
+	$(BUILDDIR)/486quake/net_loop.o \
+	$(BUILDDIR)/486quake/net_main.o \
+	$(BUILDDIR)/486quake/net_none.o \
+	$(BUILDDIR)/486quake/net_vcr.o \
+	$(BUILDDIR)/486quake/nonintel.o \
+	$(BUILDDIR)/486quake/pr_cmds.o \
+	$(BUILDDIR)/486quake/pr_edict.o \
+	$(BUILDDIR)/486quake/pr_exec.o \
+	$(BUILDDIR)/486quake/screen.o \
+	$(BUILDDIR)/486quake/sbar.o \
+	$(BUILDDIR)/486quake/sv_main.o \
+	$(BUILDDIR)/486quake/sv_phys.o \
+	$(BUILDDIR)/486quake/sv_move.o \
+	$(BUILDDIR)/486quake/sv_user.o \
+	$(BUILDDIR)/486quake/zone.o	\
+	$(BUILDDIR)/486quake/view.o	\
+	$(BUILDDIR)/486quake/wad.o \
+	$(BUILDDIR)/486quake/world.o \
+	\
+	$(BUILDDIR)/486quake/n64/sys_n64.o \
+	$(BUILDDIR)/486quake/n64/vid_n64.o \
+	$(BUILDDIR)/486quake/n64/in_n64.o \
+	$(BUILDDIR)/486quake/n64/snd_n64.o \
+	$(BUILDDIR)/486quake/null/cd_null.o
+
+include src/r_${RENDERER}/objs.mk
+
+#############################################################################
+# SETUP AND BUILD
+#############################################################################
+
+all: 550Quake.z64
+
+filesystem:
+	mkdir filesystem
+	cp -r id1 filesystem/
+
+$(BUILD_DIR)/QUAKE.dfs: filesystem
+
+550Quake.z64: $(BUILD_DIR)/QUAKE.dfs
+550Quake.z64: N64_ROM_TITLE="QUAKE"
+
+$(BUILDDIR)/486quake/550Quake.elf: $(486QUAKE_OBJS) $(486QUAKE_COBJS)
+
+#############################################################################
+# MISC
+#############################################################################
+
+-include $(wildcard $(BUILD_DIR)/*.d)
+
+clean:
+	rm -f 486quake.spec glquake.spec quake.x11.spec
+	rm -f $(486QUAKE_OBJS)
+
+cleanmake: clean all
