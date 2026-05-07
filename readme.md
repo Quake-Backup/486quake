@@ -1,20 +1,24 @@
-486quake
+TurboQuake (formerly 486Quake)
 ========
+Quake with the turbo button pressed
+-----------------------------------
 
-this repository contains 486quake, a fork of the original Quake sources with MS-DOS support restored,
-targeting era-appropriate hardware from the time of Quake's release.
 
-486quake does not add substantial functionality or bugfixes over the original Quake release. instead, it
-focuses on further optimizing the engine, and re-optimizing portions of it to run better on non-Pentium
-processors.
+this repository contains TurboQuake, a fork of the original Quake sources that
+targets older era-appropriate hardware from around and in the years after the
+time of Quake's release - including restored support for MS-DOS.
 
-despite the name, 486quake is not exclusively targeted at 486 processors. it has specific assembly
-optimizations for Intel 486, Pentium, and Cyrix 486 processors, and most other x86-compatible processors
-will work with at least one of these builds. non-intel processors are also supported, though they will
-only benefit from broader engine optimizations in 486quake, and not dedicated hand-optimized assembly.
+TurboQuake does not currently add substantial functionality or bugfixes over the
+original Quake release. instead, it focuses on further optimizing the engine, 
+and re-optimizing portions of it to run better on other platforms.
 
-486quake does not currently address 64-bit portability issues, and is not tested on 64-bit systems. it 
-will likely only work properly on 32-bit platforms.
+TurboQuake has specific assembly optimizations for Intel 486, Pentium, and Cyrix
+486 processors, and most other x86-compatible processors will work with at least
+one of these builds.
+
+Non-x86 processors are also well-supported, but do not currently have assembly
+optimizations. There are numerous renderer engine optimizations in TurboQuake 
+that still apply to these platforms.
 
 building
 ========
@@ -25,7 +29,7 @@ then, from this source directory, you can just run
 
     make
 
-this will build the standard 486quake binary by default.
+this will build the standard TurboQuake binary by default.
 
 to build all binaries, you can run the `build_all.sh` script.
 
@@ -43,7 +47,9 @@ OSTRIP: strip options passed to compiler. defaults to "-s".
 results
 =======
 
-the following tables list some known results for 486quake on different machines. there is wide variation between different boards even with the same cpu, so bear that in mind.
+the following tables list some older known results for TurboQuake on different 
+machines. there is wide variation between different boards even with the same 
+cpu, so bear that in mind.
 
 these benchmarks are all taken with default screen size and rendering settings.
 
